@@ -65,7 +65,7 @@ abstract class HLS {
   }
 
   static const String kHLSAsset =
-      'assets/packages/media_kit/assets/web/hls1.4.10.js';
+      'https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.4.10/hls.js';
   static const String kHLSCDN =
       'https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.4.10/hls.js';
 
@@ -87,6 +87,21 @@ class Hls {
 extension ExtensionHls on Hls {
   external void loadSource(String src);
   external void attachMedia(html.VideoElement video);
+  external void recoverMediaError();
+  external void on(String event, Function callback);
+  external void stopLoad();
+}
+
+class ErrorData {
+  late final String type;
+  late final String details;
+  late final bool fatal;
+
+  ErrorData(dynamic errorData) {
+    type = errorData.type as String;
+    details = errorData.details as String;
+    fatal = errorData.fatal as bool;
+  }
 }
 
 // --------------------------------------------------

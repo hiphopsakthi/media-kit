@@ -6,6 +6,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:js' as js;
+import 'dart:js';
 import 'dart:typed_data';
 import 'dart:collection';
 import 'dart:html' as html;
@@ -1428,8 +1429,29 @@ class WebPlayer extends PlatformPlayer {
     try {
       if (_isHLS(src)) {
         final hls = Hls();
-        hls.loadSource(src);
+        // hls.loadSource(src);
         hls.attachMedia(element);
+        hls.on('hlsMediaAttached', allowInterop((dynamic _, dynamic __) {
+          hls.loadSource(src);
+        }));
+        hls.on('hlsError', allowInterop((dynamic _, dynamic errorData) {
+          final ErrorData data = ErrorData(errorData);
+          print('${data.type} ${data.details} ${data.fatal}');
+          switch (data.type) {
+            case 'networkError':
+              print("fatal network error encountered, try to recover");
+              hls.loadSource(src);
+              break;
+            case 'mediaError':
+              print("fatal media error encountered, try to recover");
+              hls.recoverMediaError();
+              break;
+            default:
+              print("Other Error");
+              hls.stopLoad();
+              break;
+          }
+        }));
       } else {
         // Default
         element.src = src;
@@ -1437,6 +1459,7 @@ class WebPlayer extends PlatformPlayer {
     } catch (exception) {
       // PlayerStream.error
       final e = exception as html.DomException;
+      print("hls exception: ${e.message}");
       if (!errorController.isClosed) {
         errorController.add(e.message ?? '');
       }

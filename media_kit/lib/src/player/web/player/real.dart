@@ -1429,7 +1429,7 @@ class WebPlayer extends PlatformPlayer {
     try {
       if (_isHLS(src)) {
         final hls = Hls();
-        // hls.loadSource(src);
+        hls.loadSource(src);
         hls.attachMedia(element);
         hls.on('hlsMediaAttached', allowInterop((dynamic _, dynamic __) {
           hls.loadSource(src);
@@ -1440,14 +1440,17 @@ class WebPlayer extends PlatformPlayer {
           switch (data.type) {
             case 'networkError':
               print("fatal network error encountered, try to recover");
+              state = state.copyWith(playing: false);
               hls.loadSource(src);
               break;
             case 'mediaError':
               print("fatal media error encountered, try to recover");
+              state = state.copyWith(playing: false);
               hls.recoverMediaError();
               break;
             default:
               print("Other Error");
+              state = state.copyWith(playing: false);
               hls.stopLoad();
               break;
           }

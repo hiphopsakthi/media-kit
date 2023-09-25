@@ -81,7 +81,7 @@ external bool isHLSSupported();
 @js.JS()
 @js.staticInterop
 class Hls {
-  external factory Hls();
+  external factory Hls(HlsConfig config);
 }
 
 extension ExtensionHls on Hls {
@@ -90,6 +90,15 @@ extension ExtensionHls on Hls {
   external void recoverMediaError();
   external void on(String event, Function callback);
   external void stopLoad();
+}
+
+@js.JS()
+@js.anonymous
+class HlsConfig {
+  @js.JS()
+  external Function get xhrSetup;
+
+  external factory HlsConfig({Function xhrSetup});
 }
 
 class ErrorData {

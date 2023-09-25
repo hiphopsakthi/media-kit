@@ -5,6 +5,7 @@
 /// Use of this source code is governed by MIT license that can be found in the LICENSE file.
 import 'dart:async';
 import 'dart:convert';
+import 'dart:html';
 import 'dart:js' as js;
 import 'dart:js';
 import 'dart:typed_data';
@@ -1426,14 +1427,35 @@ class WebPlayer extends PlatformPlayer {
   }
 
   void _loadSource(String src) {
+    final Map<String, String> headers = {'range': 'bytes=0-'};
     try {
       if (_isHLS(src)) {
-        final hls = Hls();
+        final hls = Hls(
+          HlsConfig(
+            xhrSetup: allowInterop(
+              (HttpRequest xhr, String _) {
+                if (headers.isEmpty) {
+                  return;
+                }
+
+                if (headers.containsKey('useCookies')) {
+                  xhr.withCredentials = true;
+                }
+                headers.forEach((String key, String value) {
+                  if (key != 'useCookies') {
+                    xhr.setRequestHeader(key, value);
+                  }
+                });
+              },
+            ),
+          ),
+        );
         hls.loadSource(src);
         hls.attachMedia(element);
         hls.on('hlsMediaAttached', allowInterop((dynamic _, dynamic __) {
           hls.loadSource(src);
         }));
+
         hls.on('hlsError', allowInterop((dynamic _, dynamic errorData) {
           final ErrorData data = ErrorData(errorData);
           print('${data.type} ${data.details} ${data.fatal}');

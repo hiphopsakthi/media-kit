@@ -65,9 +65,9 @@ abstract class HLS {
   }
 
   static const String kHLSAsset =
-      'https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.4.10/hls.js';
+      'https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.4.12/hls.min.js';
   static const String kHLSCDN =
-      'https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.4.10/hls.js';
+      'https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.4.12/hls.min.js';
 
   static final Lock _lock = Lock();
   static bool _initialized = false;
